@@ -11,14 +11,12 @@ void gmain() {
 
 #include"libOne.h"
 struct UNKO {
-    int img = 0;
     float px=0, py=0, vx=0, vy=0, deg=0;
     int hp=0;
 };
 void gmain() {
     window(1920, 1080, full);
-    int img1 = loadImage("assets\\unkoWhite.png");
-    int img2 = loadImage("assets\\unko.png");
+    int img = loadImage("assets\\unkoWhite.png");
     const int num = 256;
     int deg = 0;
     angleMode(DEGREES);
@@ -30,8 +28,7 @@ void gmain() {
         if (isPress(MOUSE_LBUTTON)) {
             for (i = 0; i < num; i++) {
                 if (unko[i].hp == 0) {
-                    unko[i].img = img1;
-                    unko[i].px = mouseX+sin(deg) * 20;
+                    unko[i].px = mouseX + sin(deg) * 20;
                     unko[i].py = -50;
                     unko[i].vx = 0;
                     unko[i].vy = 10;
@@ -45,7 +42,6 @@ void gmain() {
         if (isPress(MOUSE_RBUTTON)) {
             for (i = 0; i < num; i++) {
                 if (unko[i].hp == 0) {
-                    unko[i].img = img1;
                     unko[i].px = width/2;
                     unko[i].py = height/2;
                     unko[i].vx = sin(deg)*5;
@@ -76,7 +72,7 @@ void gmain() {
         imageColor(143, 105, 68);
         for (i = 0; i < num; i++) {
             if (unko[i].hp > 0) {
-                image(unko[i].img, unko[i].px, unko[i].py, unko[i].deg);
+                image(img, unko[i].px, unko[i].py, unko[i].deg);
             }
         }
     }
