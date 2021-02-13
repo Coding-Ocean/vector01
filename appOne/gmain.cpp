@@ -10,72 +10,91 @@ void gmain() {
 #else
 
 #include"libOne.h"
-struct UNKO {
-    float px=0, py=0, vx=0, vy=0, deg=0;
-    int hp=0;
-};
 void gmain() {
     window(1920, 1080, full);
-    int img = loadImage("assets\\unkoWhite.png");
+    //サウンド
+    int bgm = loadSound("assets\\bgm_battle02.wav");
+    int onara = loadSound("assets\\onara.wav");
+    playLoopSound(bgm);
+    //うんこデータ
+    int img = loadImage("assets\\unkoSonomono.png");
+    struct UNKO {
+        int hp=0;
+        float px=0, py=0, vx=0, vy=0, deg=0;
+    };
     const int num = 256;
-    int deg = 0;
-    angleMode(DEGREES);
     UNKO unko[num];
-    int i = 0;
+    //にきにきうんこ用データ
+    float deg = 0;
+    float refPx=0;//出現基準となるｘ位置
+    //放射状うんこ用データ
+    float deg2 = 0;
+    bool flag = false;
+    angleMode(DEGREES);
     rectMode(CENTER);
+    ShowCursor(false);
     while (notQuit) {
-        //発射
-        if (isPress(MOUSE_LBUTTON)) {
-            for (i = 0; i < num; i++) {
+        //にきにき発射
+        if (isPress(KEY_Z)) {
+            if (isTrigger(KEY_Z)) {
+                playSound(onara);
+                refPx = random(50.0f, width - 50);
+            }
+            //ｈｐが０のunkoを探して発射
+            for (int i = 0; i < num; i++) {
                 if (unko[i].hp == 0) {
-                    unko[i].px = mouseX + sin(deg) * 20;
+                    unko[i].px = refPx + sin(deg) * 20;
                     unko[i].py = -50;
                     unko[i].vx = 0;
                     unko[i].vy = 10;
                     unko[i].deg = 0;
                     unko[i].hp = 1;
-                    deg+=6;
+                    deg += 6;
+                    //ループ中断
                     i = num;
                 }
             }
         }
-        if (isPress(MOUSE_RBUTTON)) {
-            for (i = 0; i < num; i++) {
+        //放射状発射２
+        if (isTrigger(KEY_X))flag = !flag;
+        if (flag) {
+            //ｈｐが０のunkoを探して発射
+            for (int i = 0; i < num; i++) {
                 if (unko[i].hp == 0) {
-                    unko[i].px = width/2;
-                    unko[i].py = height/2;
-                    unko[i].vx = sin(deg)*5;
-                    unko[i].vy = -cos(deg)*5;
-                    unko[i].deg = deg;
+                    unko[i].px = width / 2;
+                    unko[i].py = height / 2;
+                    unko[i].vx = sin(deg2) * 5;
+                    unko[i].vy = -cos(deg2) * 5;
+                    unko[i].deg = deg2;
                     unko[i].hp = 1;
-                    deg += 6;
+                    deg2 += 25;
+                    //ループ中断
                     i = num;
                 }
             }
         }
         //移動
-        for (i = 0; i < num; i++) {
+        for (int i = 0; i < num; i++) {
             if (unko[i].hp > 0) {
                 unko[i].px += unko[i].vx;
                 unko[i].py += unko[i].vy;
-                if (unko[i].py <-50 ||
-                    unko[i].py > height + 50 ||
-                    unko[i].px > width + 50 ||
-                    unko[i].px < -50
-                    ) {
+                //ウィンドウの外に出たうんこのｈｐを０にする
+                if (unko[i].py <-50 || unko[i].py > height + 50 ||
+                    unko[i].px > width + 50 || unko[i].px < -50 ) {
                     unko[i].hp = 0;
                 }
             }
         }
         //描画
         clear(200,200,0);
-        imageColor(143, 105, 68);
-        for (i = 0; i < num; i++) {
+        imageColor(140, 100, 10);
+        for (int i = 0; i < num; i++) {
             if (unko[i].hp > 0) {
                 image(img, unko[i].px, unko[i].py, unko[i].deg);
             }
         }
     }
+    ShowCursor(true);
 }
 
 #endif
